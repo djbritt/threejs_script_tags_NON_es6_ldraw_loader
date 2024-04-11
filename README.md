@@ -1,4 +1,4 @@
-# threejs_script_tags_NON_es6_ldraw_loader
+# threejs_script_tags_NON_es6_webgl_loader_ldraw
 
 ## Project Structure
 
