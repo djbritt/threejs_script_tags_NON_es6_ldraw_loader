@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js webgl - LDrawLoader Shuttle View</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div id="info">
+        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - LDrawLoader Shuttle View
+    </div>
+    <script src="./three.min.js"></script>
+    <!-- <script src="./LDrawLoader.js"></script> -->
+    <!-- <script srv="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+    <script>
+    function loadJS(urls, currentIndex, callback) {
+      // Check if all scripts have been loaded
+      if (currentIndex >= urls.length) {
+        callback(); // All scripts loaded, call the final callback
+        return;
+      }
+
+      // Load the current script
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = urls[currentIndex];
+      script.onload = () => loadJS(urls, currentIndex + 1, callback); // Load the next script on current script load
+      document.head.appendChild(script);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const scriptsToLoad = ['./LDrawLoader.js', './OrbitControls.js'];
+
+      loadJS(scriptsToLoad, 0, function() {
+        // Scripts have been loaded, initialize your Three.js scene or other logic here
+        console.log('LDrawLoader and OrbitControls have been loaded.');
+        init();
+        animate();
+      });
+    });
+
+    </script>
+
+<script>
+// console.log(THREE); // To see if THREE is defined
+// console.log(new THREE.MeshStandardMaterial); // To check if Vector3 is a part of THREE
+// console.log(object.up); // Should log a Vector3
+// console.log(quat); // Should log a Quaternion
+
+</script>
+
+   <script>
+        // import * as THREE from 'three';
+        // import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        // import { LDrawLoader } from 'three/addons/loaders/LDrawLoader.js';
+
+        let camera, scene, renderer, controls;
+        const ldrawPath = './';
+        const shuttleModelFileName = './4494-1-Imperial Shuttle-Mini.mpd_Packed.mpd';
+
+
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xdeebed);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+            // Position the camera behind the shuttle
+            camera.position.set(0, 100, 700);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xaaaaaa); // Soft white light
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1).normalize(); // Position the light to shine from a direction
+            scene.add(directionalLight);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // controls = THREE.OrbitControls(camera, renderer.domElement);
+            // const controls = new THREE.OrbitControls(camera, scene);
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+            controls.enableDamping = true;
+
+            // Load the shuttle model
+            const loader = new LDrawLoader();
+            loader.setPath(ldrawPath);
+            loader.load(shuttleModelFileName, function(group) {
+                scene.add(group);
+								// model.rotation.y = Math.PI;
+								group.rotation.x = Math.PI;
+								group.rotation.y = Math.PI;
+
+
+            });
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            // controls.update(); // Only required if controls.enableDamping = true, or if controls.autoRotate = true
+            renderer.render(scene, camera);
+        }
+    </script>
+    <!-- LDraw.org CC BY 2.0 Parts Library attribution -->
+    <div style="display: block; position: absolute; bottom: 8px; left: 8px; width: 160px; padding: 10px; background-color: #F3F7F8;">
+        <center>
+            <!-- <a href="http://www.ldraw.org"><img style="width: 145px" src="models/ldraw/ldraw_org_logo/Stamp145.png"></a> -->
+            <br />
+            <a href="http://www.ldraw.org/">This software uses the LDraw Parts Library</a>
+        </center>
+    </div>
+</body>
+</html>
